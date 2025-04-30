@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medium hinzufügen!</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h2 style="text-align:center;">Neues Medium hinzufügen</h2>
+  <form id="addMediaForm">
+    <label for="title">Titel:</label>
+    <input type="text" id="title" name="title" required />
+
+    <label for="mediaType">Medientyp:</label>
+    <select id="mediaType" name="mediaType" required>
+      <option value="">Bitte wählen...</option>
+      <option value="Buch">Buch</option>
+      <option value="DVD">DVD</option>
+      <option value="Zeitschrift">Zeitschrift</option>
+    </select>
+
+    <label for="available">Verfügbar:</label>
+    <select id="available" name="available" required>
+      <option value="true">Ja</option>
+      <option value="false">Nein</option>
+    </select>
+
+    <button type="submit">Medium hinzufügen</button>
+    <div class="message" id="message"></div>
+  </form>
+
+  <a href="index.html" class="button">Zurück</a>
+  <script src="script.js"></script>
+</body>
+</html>

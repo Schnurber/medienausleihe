@@ -1,0 +1,112 @@
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  padding: 2rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #1565c0;
+}
+
+form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+input, select, button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus, button:focus {
+  outline: none;
+  border-color: #1565c0;
+  box-shadow: 0 0 5px rgba(21, 101, 192, 0.5);
+}
+
+button {
+  background-color: #1565c0;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0d47a1;
+}
+
+.message {
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+a {
+  display: inline-block;
+  margin-top: 1rem;
+  text-align: center;
+  color: #1565c0;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.button {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  background-color: #1565c0;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  margin: 1rem auto;
+  max-width: 300px;
+}
+
+a.button:hover {
+  background-color: #0d47a1;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+ul li {
+  margin: 1rem 0;
+}
+
+ul li a {
+  display: block;
+  padding: 1rem;
+  background: #1565c0;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+ul li a:hover {
+  background: #0d47a1;
+}
