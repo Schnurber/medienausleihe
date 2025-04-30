@@ -1,0 +1,108 @@
+/* Define CSS variables */
+:root {
+  --primary-color: #4CAF50;
+  --primary-hover-color: color-mix(in srgb, var(--primary-color) 90%, black 10%);
+  --secondary-color: color-mix(in srgb, var(--primary-color) 80%, white 20%);
+  --text-color: white;
+  --background-color: #f9f9f9;
+  --border-color: #ccc;
+  --box-shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+}
+
+header {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  padding: 1rem 0;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav ul li {
+  margin: 0;
+}
+
+nav ul li a {
+  display: block;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  transition: background-color 0.3s;
+}
+
+nav ul li:hover {
+  background-color: var(--secondary-color);
+}
+
+main {
+  padding: 1rem;
+}
+
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  background: white;
+  padding: 1rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+form input, form select, form button {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+form button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+message, h2 {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  background: white;
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px var(--box-shadow-color);
+}

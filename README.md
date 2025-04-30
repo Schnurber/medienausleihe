@@ -85,11 +85,11 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
 
 ---
 
-### 5. Backend starten
+### 5. Backen starten
 
 1. Stelle sicher, dass du dich im Projektverzeichnis befindest:
    ```bash
-   cd /Users/dietermeiller/work/ausleihetest
+   cd <Projektordner>
    ```
 2. Installiere die Abhängigkeiten:
    ```bash
@@ -97,9 +97,15 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
    ```
 3. Starte den Server:
    ```bash
-   node index.js
+   node server/index.js
    ```
 4. Der Server läuft nun unter: [http://localhost:3000](http://localhost:3000)
+
+### 5. React starten
+
+   ```bash
+   npm start
+   ```
 
 ---
 

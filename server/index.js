@@ -127,6 +127,6 @@ app.get('/loans', async (req, res) => {
 });
 
 // Server starten
-app.listen(3000, () => {
-  console.log("🚀 Server läuft auf http://localhost:3000");
+app.listen(3001, () => {
+  console.log("🚀 Server läuft auf http://localhost:3001");
 });
