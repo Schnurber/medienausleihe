@@ -6,7 +6,8 @@ import LoanMedia from './components/LoanMedia';
 import ReturnMedia from './components/ReturnMedia'; 
 import Auth from './components/Auth';
 function App() {
-  const isLoggedIn = !localStorage.getItem('token');
+  const isLoggedIn = !!localStorage.getItem('token');
+  console.log(isLoggedIn);
   return (
     <div className="App">
       <header>

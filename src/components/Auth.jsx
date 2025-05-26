@@ -25,7 +25,7 @@ function Auth() {
       if (response.ok && !isRegister) {
         // Token speichern
         if (result.token) {
-          localStorage.setItem('token', result.token);
+          sessionStorage.setItem('token', result.token);
         }
       }
     } catch {

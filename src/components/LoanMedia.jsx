@@ -8,7 +8,7 @@ function LoanMedia() {
 
   useEffect(() => {
     async function fetchData() {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const usersResponse = await fetch('http://localhost:3001/users', {
         headers: { 'Authorization': 'Bearer ' + token }
       });
@@ -33,7 +33,7 @@ function LoanMedia() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
+          'Authorization': 'Bearer ' + sessionStorage.getItem('token')
         },
         body: JSON.stringify(formData),
       });
@@ -41,7 +41,7 @@ function LoanMedia() {
       setMessage(result.message);
       // Refresh media list
       const mediaResponse = await fetch('http://localhost:3001/media', {
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       setMedia(await mediaResponse.json());
     } catch (error) {

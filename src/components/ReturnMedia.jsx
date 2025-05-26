@@ -8,7 +8,7 @@ function ReturnMedia() {
   useEffect(() => {
     async function fetchLoans() {
       const response = await fetch('http://localhost:3001/loans', {
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       setLoans(await response.json());
     }
@@ -27,7 +27,7 @@ function ReturnMedia() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
+          'Authorization': 'Bearer ' + sessionStorage.getItem('token')
         },
         body: JSON.stringify(formData),
       });
@@ -35,7 +35,7 @@ function ReturnMedia() {
       setMessage(result.message || 'Medium erfolgreich zurückgegeben!');
       // Refresh loans list
       const loansResponse = await fetch('http://localhost:3001/loans', {
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       setLoans(await loansResponse.json());
     } catch (error) {
