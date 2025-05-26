@@ -8,8 +8,13 @@ function LoanMedia() {
 
   useEffect(() => {
     async function fetchData() {
-      const usersResponse = await fetch('http://localhost:3001/users');
-      const mediaResponse = await fetch('http://localhost:3001/media');
+      const token = localStorage.getItem('token');
+      const usersResponse = await fetch('http://localhost:3001/users', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const mediaResponse = await fetch('http://localhost:3001/media', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
       setUsers(await usersResponse.json());
       setMedia(await mediaResponse.json());
     }
@@ -26,13 +31,18 @@ function LoanMedia() {
     try {
       const response = await fetch('http://localhost:3001/loan', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: JSON.stringify(formData),
       });
       const result = await response.json();
       setMessage(result.message);
       // Refresh media list
-      const mediaResponse = await fetch('http://localhost:3001/media');
+      const mediaResponse = await fetch('http://localhost:3001/media', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+      });
       setMedia(await mediaResponse.json());
     } catch (error) {
       setMessage('Fehler beim Ausleihen.');

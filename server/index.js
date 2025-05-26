@@ -2,6 +2,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
@@ -15,7 +17,8 @@ mongoose.connect('mongodb://localhost:27017/medienausleihe')
 // SCHEMAS & MODELS
 const userSchema = new mongoose.Schema({
   name: String,
-  email: String
+  email: String,
+  password: String // Passwort-Hash
 });
 
 const mediaSchema = new mongoose.Schema({
@@ -35,6 +38,32 @@ const User = mongoose.model('User', userSchema);
 const Media = mongoose.model('Media', mediaSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 
+const JWT_SECRET = 'dein_geheimes_jwt_secret'; // In Produktion in ENV auslagern
+
+// Auth-Middleware
+function authMiddleware(req, res, next) {
+  if (
+    req.path === '/login' ||
+    req.path === '/register'
+  ) {
+    return next();
+  }
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Nicht autorisiert' });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch {
+    return res.status(401).json({ message: 'Ungültiger Token' });
+  }
+}
+
+app.use(authMiddleware);
+
 // ROUTES
 
 // Alle Nutzer abrufen
@@ -52,6 +81,50 @@ app.post('/users', async (req, res) => {
     res.status(201).json({ message: 'Benutzer erfolgreich hinzugefügt', user: newUser });
   } catch (error) {
     res.status(500).json({ message: 'Fehler beim Hinzufügen des Benutzers', error });
+  }
+});
+
+// Registrierung: Neuen Benutzer mit Passwort anlegen
+app.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    // Prüfe, ob E-Mail schon existiert
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'E-Mail bereits registriert' });
+    }
+    // Passwort hashen
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    // Benutzer speichern
+    const newUser = await User.create({ name, email, password: hashedPassword });
+    res.status(201).json({ message: 'Registrierung erfolgreich', user: { _id: newUser._id, name: newUser.name, email: newUser.email } });
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler bei der Registrierung', error });
+  }
+});
+
+// Login: Benutzer authentifizieren
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Ungültige E-Mail oder Passwort' });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Ungültige E-Mail oder Passwort' });
+    }
+    // JWT erzeugen
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+    res.json({ message: 'Login erfolgreich', token, user: { _id: user._id, name: user.name, email: user.email } });
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Login', error });
   }
 });
 

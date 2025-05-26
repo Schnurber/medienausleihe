@@ -14,7 +14,10 @@ function AddMedia() {
     try {
       const response = await fetch('http://localhost:3001/media', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: JSON.stringify(formData),
       });
       const result = await response.json();

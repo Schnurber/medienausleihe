@@ -7,7 +7,9 @@ function ReturnMedia() {
 
   useEffect(() => {
     async function fetchLoans() {
-      const response = await fetch('http://localhost:3001/loans');
+      const response = await fetch('http://localhost:3001/loans', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+      });
       setLoans(await response.json());
     }
     fetchLoans();
@@ -23,13 +25,18 @@ function ReturnMedia() {
     try {
       const response = await fetch('http://localhost:3001/return', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
         body: JSON.stringify(formData),
       });
       const result = await response.json();
       setMessage(result.message || 'Medium erfolgreich zurückgegeben!');
       // Refresh loans list
-      const loansResponse = await fetch('http://localhost:3001/loans');
+      const loansResponse = await fetch('http://localhost:3001/loans', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+      });
       setLoans(await loansResponse.json());
     } catch (error) {
       setMessage('Fehler beim Zurückgeben.');

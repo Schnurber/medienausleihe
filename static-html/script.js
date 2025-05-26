@@ -94,7 +94,7 @@ document.getElementById('addUserForm')?.addEventListener('submit', async (e) => 
     });
 
     const result = await response.json();
-    messageDiv.textContent = result.message || 'Benutzer erfolgreich hinzugefügt!';
+    messageDiv.textContent = result.message;
     messageDiv.style.color = response.ok ? 'green' : 'red';
   } catch (error) {
     messageDiv.textContent = 'Fehler beim Hinzufügen des Benutzers.';
