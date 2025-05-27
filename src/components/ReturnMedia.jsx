@@ -10,7 +10,11 @@ function ReturnMedia() {
       const response = await fetch('http://localhost:3001/loans', {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
-      const allLoans = await response.json();
+      let allLoans = [];
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        allLoans = await response.json();
+      }
       setLoans(Array.isArray(allLoans) ? allLoans : []);
     }
     fetchLoans();

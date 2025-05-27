@@ -1,25 +1,52 @@
 import './App.css';
 import { Routes, Route, Link } from 'react-router-dom';
 import AddMedia from './components/AddMedia'; 
-import AddUser from './components/AddUser'; 
 import LoanMedia from './components/LoanMedia';
 import ReturnMedia from './components/ReturnMedia'; 
 import Auth from './components/Auth';
 
+function getUserRoleFromToken() {
+  const token = sessionStorage.getItem('token');
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+}
+
+function getUserNameFromToken() {
+  const token = sessionStorage.getItem('token');
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.name || null;
+  } catch {
+    return null;
+  }
+}
+
 function App() {
   const isLoggedIn = !!sessionStorage.getItem('token');
+  const userRole = getUserRoleFromToken();
+  const userName = getUserNameFromToken();
   // console.log(isLoggedIn);
   return (
     <div className="App">
       <header>
         <h1>Medienausleihe</h1>
+        <p>
+          {isLoggedIn && userName && (
+            <span style={{fontWeight: 'bold', color: '#fff'}}>Angemeldet als: {userName} Rolle: {userRole}</span>
+          )}
+        </p>
       </header>
       <nav>
         <ul>
           {isLoggedIn ? (
             <>
-              <li><Link to="/add-media">Medium hinzufügen</Link></li>
-              <li><Link to="/add-user">Benutzer hinzufügen</Link></li>
+              {userRole === 'admin' && <li><Link to="/add-media">Medium hinzufügen</Link></li>}
               <li><Link to="/loan-media">Medien ausleihen</Link></li>
               <li><Link to="/return-media">Medium zurückgeben</Link></li>
             </>
@@ -30,11 +57,12 @@ function App() {
       </nav>
       <main>
         <Routes>
-          {isLoggedIn && <Route path="/add-media" element={<AddMedia />} />}
-          {isLoggedIn && <Route path="/add-user" element={<AddUser />} />}
+          {isLoggedIn && userRole === 'admin' && <Route path="/add-media" element={<AddMedia />} />}
           {isLoggedIn && <Route path="/loan-media" element={<LoanMedia />} />}
           {isLoggedIn && <Route path="/return-media" element={<ReturnMedia />} />}
           <Route path="/auth" element={<Auth />} />
+          {/* Route für /add-media immer verfügbar, aber Komponente nur für Admin */}
+          {isLoggedIn && userRole !== 'admin' && <Route path="/add-media" element={<div>Kein Zugriff</div>} />}
         </Routes>
       </main>
     </div>

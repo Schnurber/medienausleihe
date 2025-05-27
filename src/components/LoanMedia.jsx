@@ -24,7 +24,10 @@ function LoanMedia() {
       const mediaResponse = await fetch('http://localhost:3001/media', {
         headers: { 'Authorization': 'Bearer ' + token }
       });
+       let contentType = mediaResponse.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
       setMedia(await mediaResponse.json());
+      }
     }
     fetchData();
   }, []);
@@ -47,11 +50,14 @@ function LoanMedia() {
       });
       const result = await response.json();
       setMessage(result.message);
+
       // Refresh media list
       const mediaResponse = await fetch('http://localhost:3001/media', {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
+
       setMedia(await mediaResponse.json());
+      
     } catch (error) {
       setMessage('Fehler beim Ausleihen.');
     }

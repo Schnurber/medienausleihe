@@ -18,7 +18,8 @@ mongoose.connect('mongodb://localhost:27017/medienausleihe')
 const userSchema = new mongoose.Schema({
   name: String,
   email: String,
-  password: String // Passwort-Hash
+  password: String, // Passwort-Hash
+  role: String
 });
 
 const mediaSchema = new mongoose.Schema({
@@ -66,23 +67,6 @@ app.use(authMiddleware);
 
 // ROUTES
 
-// Alle Nutzer abrufen
-app.get('/users', async (req, res) => {
-  const users = await User.find();
-  res.json(users);
-});
-
-// Neuen Benutzer hinzufügen
-app.post('/users', async (req, res) => {
-  const { name, email } = req.body;
-
-  try {
-    const newUser = await User.create({ name, email });
-    res.status(201).json({ message: 'Benutzer erfolgreich hinzugefügt', user: newUser });
-  } catch (error) {
-    res.status(500).json({ message: 'Fehler beim Hinzufügen des Benutzers', error });
-  }
-});
 
 // Registrierung: Neuen Benutzer mit Passwort anlegen
 app.post('/register', async (req, res) => {
@@ -97,7 +81,7 @@ app.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     // Benutzer speichern
-    const newUser = await User.create({ name, email, password: hashedPassword });
+    const newUser = await User.create({ name, email, password: hashedPassword, role: "user" });
     res.status(201).json({ message: 'Registrierung erfolgreich', user: { _id: newUser._id, name: newUser.name, email: newUser.email } });
   } catch (error) {
     res.status(500).json({ message: 'Fehler bei der Registrierung', error });
@@ -116,13 +100,13 @@ app.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Ungültige E-Mail oder Passwort' });
     }
-    // JWT erzeugen
+    // JWT erzeugen (jetzt mit name und role)
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, name: user.name, role: user.role },
       JWT_SECRET,
       { expiresIn: '2h' }
     );
-    res.json({ message: 'Login erfolgreich', token, user: { _id: user._id, name: user.name, email: user.email } });
+    res.json({ message: 'Login erfolgreich', token, user: { _id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) {
     res.status(500).json({ message: 'Fehler beim Login', error });
   }
