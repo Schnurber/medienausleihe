@@ -180,18 +180,15 @@ app.post('/return', async (req, res) => {
   res.json({ message: 'Medium zurückgegeben' });
 });
 
-// Aktive Ausleihen abrufen
+// Aktive Ausleihen des eingeloggten Users abrufen
 app.get('/loans', async (req, res) => {
   try {
-    const loans = await Loan.find({ returnedAt: null })
-      .populate('userId', 'name')
+    const userId = req.user.userId; // aus JWT
+    const loans = await Loan.find({ returnedAt: null, userId })
       .populate('mediaId', 'title');
-
-
     const formattedLoans = loans.map(loan => ({
       _id: loan._id,
-      userName: loan.userId.name,
-      mediaTitle: loan.mediaId.title
+      title: loan.mediaId.title
     }));
     res.json(formattedLoans);
   } catch (error) {

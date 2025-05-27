@@ -1,21 +1,29 @@
 import React, { useState, useEffect } from 'react';
 
+function getUserIdFromToken() {
+  const token = sessionStorage.getItem('token');
+  if (!token) return null;
+  try {
+    // JWT besteht aus 3 Teilen, Payload ist der zweite (Base64)
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId;
+  } catch {
+    return null;
+  }
+}
+
 function LoanMedia() {
-  const [users, setUsers] = useState([]);
   const [media, setMedia] = useState([]);
-  const [formData, setFormData] = useState({ userId: '', mediaId: '' });
+  const [formData, setFormData] = useState({ mediaId: '' });
   const [message, setMessage] = useState('');
+  const userId = getUserIdFromToken();
 
   useEffect(() => {
     async function fetchData() {
       const token = sessionStorage.getItem('token');
-      const usersResponse = await fetch('http://localhost:3001/users', {
-        headers: { 'Authorization': 'Bearer ' + token }
-      });
       const mediaResponse = await fetch('http://localhost:3001/media', {
         headers: { 'Authorization': 'Bearer ' + token }
       });
-      setUsers(await usersResponse.json());
       setMedia(await mediaResponse.json());
     }
     fetchData();
@@ -35,7 +43,7 @@ function LoanMedia() {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + sessionStorage.getItem('token')
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ userId, mediaId: formData.mediaId }),
       });
       const result = await response.json();
       setMessage(result.message);
@@ -53,15 +61,6 @@ function LoanMedia() {
     <div>
       <h2>Medien ausleihen</h2>
       <form onSubmit={handleSubmit}>
-        <label>
-          Benutzer:
-          <select name="userId" value={formData.userId} onChange={handleChange} required>
-            <option value="">Bitte wählen...</option>
-            {users.map((user) => (
-              <option key={user._id} value={user._id}>{user.name}</option>
-            ))}
-          </select>
-        </label>
         <label>
           Medium:
           <select name="mediaId" value={formData.mediaId} onChange={handleChange} required>

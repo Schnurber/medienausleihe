@@ -10,7 +10,8 @@ function ReturnMedia() {
       const response = await fetch('http://localhost:3001/loans', {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
-      setLoans(await response.json());
+      const allLoans = await response.json();
+      setLoans(Array.isArray(allLoans) ? allLoans : []);
     }
     fetchLoans();
   }, []);
@@ -37,7 +38,8 @@ function ReturnMedia() {
       const loansResponse = await fetch('http://localhost:3001/loans', {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
-      setLoans(await loansResponse.json());
+      const allLoans = await loansResponse.json();
+      setLoans(Array.isArray(allLoans) ? allLoans : []);
     } catch (error) {
       setMessage('Fehler beim Zurückgeben.');
     }
@@ -53,7 +55,7 @@ function ReturnMedia() {
             <option value="">Bitte wählen...</option>
             {loans.map((loan) => (
               <option key={loan._id} value={loan._id}>
-                Benutzer: {loan.userName || 'Unbekannt'}, Medium: {loan.mediaTitle || 'Unbekannt'}
+                Medium: {loan.title || 'Unbekannt'}
               </option>
             ))}
           </select>
