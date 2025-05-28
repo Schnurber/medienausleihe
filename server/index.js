@@ -120,15 +120,18 @@ app.get('/media', async (req, res) => {
 
 // Neues Medium hinzufügen
 app.post('/media', async (req, res) => {
-    const { title, mediaType, available } = req.body;
-  
-    try {
-      const newMedia = await Media.create({ title, mediaType, available });
-      res.status(201).json({ message: 'Medium erfolgreich hinzugefügt', media: newMedia });
-    } catch (error) {
-      res.status(500).json({ message: 'Fehler beim Hinzufügen des Mediums', error });
-    }
-  });
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen Medien hinzufügen.' });
+  }
+  const { title, mediaType, available } = req.body;
+
+  try {
+    const newMedia = await Media.create({ title, mediaType, available });
+    res.status(201).json({ message: 'Medium erfolgreich hinzugefügt', media: newMedia });
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Hinzufügen des Mediums', error });
+  }
+});
 
 // Medium ausleihen
 app.post('/loan', async (req, res) => {
@@ -177,6 +180,26 @@ app.get('/loans', async (req, res) => {
     res.json(formattedLoans);
   } catch (error) {
     res.status(500).json({ message: 'Fehler beim Abrufen der Ausleihen', error });
+  }
+});
+
+// Medium löschen (nur für Admins, nur wenn verfügbar)
+app.delete('/media/:id', async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen Medien löschen.' });
+  }
+  try {
+    const media = await Media.findById(req.params.id);
+    if (!media) {
+      return res.status(404).json({ message: 'Medium nicht gefunden.' });
+    }
+    if (!media.available) {
+      return res.status(400).json({ message: 'Nur verfügbare Medien können gelöscht werden.' });
+    }
+    await Media.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Medium gelöscht.' });
+  } catch {
+    res.status(500).json({ message: 'Fehler beim Löschen.' });
   }
 });
 

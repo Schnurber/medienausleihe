@@ -1,6 +1,6 @@
 import './App.css';
 import { Routes, Route, Link } from 'react-router-dom';
-import AddMedia from './components/AddMedia'; 
+import ManageMedia from './components/ManageMedia'; 
 import LoanMedia from './components/LoanMedia';
 import ReturnMedia from './components/ReturnMedia'; 
 import Auth from './components/Auth';
@@ -46,7 +46,7 @@ function App() {
         <ul>
           {isLoggedIn ? (
             <>
-              {userRole === 'admin' && <li><Link to="/add-media">Medium hinzufügen</Link></li>}
+              {userRole === 'admin' && <li><Link to="/add-media">Medien verwalten</Link></li>}
               <li><Link to="/loan-media">Medien ausleihen</Link></li>
               <li><Link to="/return-media">Medium zurückgeben</Link></li>
             </>
@@ -57,12 +57,10 @@ function App() {
       </nav>
       <main>
         <Routes>
-          {isLoggedIn && userRole === 'admin' && <Route path="/add-media" element={<AddMedia />} />}
+          {isLoggedIn && userRole === 'admin' && <Route path="/add-media" element={<ManageMedia />} />}
           {isLoggedIn && <Route path="/loan-media" element={<LoanMedia />} />}
           {isLoggedIn && <Route path="/return-media" element={<ReturnMedia />} />}
           <Route path="/auth" element={<Auth />} />
-          {/* Route für /add-media immer verfügbar, aber Komponente nur für Admin */}
-          {isLoggedIn && userRole !== 'admin' && <Route path="/add-media" element={<div>Kein Zugriff</div>} />}
         </Routes>
       </main>
     </div>

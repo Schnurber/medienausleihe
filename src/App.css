@@ -1,6 +1,7 @@
 /* Define CSS variables */
 :root {
   --primary-color: #4CAF50;
+    --field-color: #7bce7e;
   --primary-hover-color: color-mix(in srgb, var(--primary-color) 90%, black 10%);
   --secondary-color: color-mix(in srgb, var(--primary-color) 80%, white 20%);
   --text-color: white;
@@ -58,7 +59,7 @@ form {
   max-width: 400px;
   margin: 0 auto;
   background: white;
-  padding: 1rem;
+  padding: 2rem;
   border-radius: 5px;
   box-shadow: 0 2px 4px var(--box-shadow-color);
 }
@@ -77,11 +78,15 @@ form input, form select, form button {
   border-radius: 4px;
 }
 
-form button {
-  background-color: var(--primary-color);
+form input {
+  background-color: var(--field-color);
   color: var(--text-color);
   border: none;
   cursor: pointer;
+}
+
+.medialist input {
+   width: min-content;
 }
 
 form button:hover {
