@@ -2,6 +2,28 @@
 
 Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-Backend und einer MongoDB-Datenbank.
 
+## Komponenten-Übersicht (React)
+
+- **Auth.jsx**  
+  Login- und Registrierungsformular. Nach erfolgreichem Login wird das Token gespeichert und die Seite neu geladen.
+
+- **ManageMedia.jsx**  
+  Verwaltung der Medien: Medien können hinzugefügt und (sofern verfügbar) gelöscht werden. Die Medien werden in einer Liste angezeigt, Checkboxen erlauben Mehrfachlöschung.
+
+- **ManageUser.jsx**  
+  Verwaltung der Nutzer: Nutzer können gelöscht werden (nur wenn keine Ausleihe offen ist) und die Rolle ("user"/"admin") kann geändert werden. Der eigene Nutzer wird nicht angezeigt.
+
+- **LoanMedia.jsx**  
+  Ermöglicht eingeloggten Nutzern das Ausleihen von Medien. Es werden nur verfügbare Medien angezeigt.
+
+- **ReturnMedia.jsx**  
+  Zeigt die eigenen ausgeliehenen Medien an und ermöglicht deren Rückgabe.
+
+- **App.jsx**  
+  Hauptkomponente, die das Routing und das Menü steuert. Zeigt je nach Rolle und Login-Status die passenden Menüpunkte und Komponenten.
+
+---
+
 ## Voraussetzungen
 
 - [Node.js](https://nodejs.org/) (Version 16 oder höher)

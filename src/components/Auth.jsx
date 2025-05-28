@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Komponente für Login und Registrierung
 function Auth() {
+  // State für Formular, Rückmeldung, Modus (Login/Registrierung)
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  // Formularfelder aktualisieren
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Login oder Registrierung absenden
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -32,10 +36,10 @@ function Auth() {
       }
       setMessage(result.message);
       if (response.ok && !isRegister) {
-        // Token speichern
+        // Token speichern und weiterleiten
         if (result.token) {
           sessionStorage.setItem('token', result.token);
-          window.location.href = '/loan-media'; // Seite komplett neu laden, damit alle Routen und das Menü korrekt erscheinen
+          window.location.href = '/loan-media'; // Seite neu laden, damit Menü und Routing stimmen
         }
       }
       // Registrierung erfolgreich: Wechsel auf Login-Ansicht

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
+// Komponente zur Verwaltung von Medien (Hinzufügen und Löschen)
 function ManageMedia() {
+  // State für Formular, Rückmeldungen, Medienliste und Auswahl
   const [formData, setFormData] = useState({ title: '', mediaType: '', available: true });
   const [message, setMessage] = useState('');
   const [mediaList, setMediaList] = useState([]);
   const [selected, setSelected] = useState({});
 
+  // Medien beim Laden der Komponente abrufen
   useEffect(() => {
     fetchMedia();
   }, []);
 
+  // Medien vom Server laden
   const fetchMedia = async () => {
     try {
       const response = await fetch('http://localhost:3001/media', {
@@ -22,15 +26,18 @@ function ManageMedia() {
     }
   };
 
+  // Formularfelder aktualisieren
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Checkbox-Auswahl für Löschen
   const handleCheckbox = (id) => {
     setSelected(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  // Medium hinzufügen
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -50,6 +57,7 @@ function ManageMedia() {
     }
   };
 
+  // Ausgewählte Medien löschen
   const handleDelete = async () => {
     const idsToDelete = Object.keys(selected).filter(id => selected[id]);
     if (idsToDelete.length === 0) return;

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+// Komponente zum Zurückgeben von Medien (nur eigene Ausleihen)
 function ReturnMedia() {
   const [loans, setLoans] = useState([]);
   const [formData, setFormData] = useState({ loanId: '' });
   const [message, setMessage] = useState('');
 
+  // Eigene Ausleihen beim Laden abrufen
   useEffect(() => {
     async function fetchLoans() {
       const response = await fetch('http://localhost:3001/loans', {
@@ -20,11 +22,13 @@ function ReturnMedia() {
     fetchLoans();
   }, []);
 
+  // Formularfelder aktualisieren
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Medium zurückgeben
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -38,7 +42,7 @@ function ReturnMedia() {
       });
       const result = await response.json();
       setMessage(result.message || 'Medium erfolgreich zurückgegeben!');
-      // Refresh loans list
+      // Ausleihenliste aktualisieren
       const loansResponse = await fetch('http://localhost:3001/loans', {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });

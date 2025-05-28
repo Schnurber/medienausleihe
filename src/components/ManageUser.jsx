@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
+// Komponente zur Verwaltung der Nutzer (Rolle ändern, löschen)
 function ManageUser() {
+  // State für Nutzer, Ausleihen, Rückmeldung
   const [users, setUsers] = useState([]);
   const [loans, setLoans] = useState([]);
   const [message, setMessage] = useState('');
 
+  // Nutzer und Ausleihen beim Laden abrufen
   useEffect(() => {
     fetchUsers();
     fetchLoans();
   }, []);
 
+  // Nutzer vom Server laden
   const fetchUsers = async () => {
     const res = await fetch('http://localhost:3001/users', {
       headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
@@ -17,6 +21,7 @@ function ManageUser() {
     setUsers(await res.json());
   };
 
+  // Alle Ausleihen laden
   const fetchLoans = async () => {
     const res = await fetch('http://localhost:3001/loans/all', {
       headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
@@ -24,8 +29,10 @@ function ManageUser() {
     setLoans(await res.json());
   };
 
+  // Prüfen, ob Nutzer noch Ausleihen hat
   const userHasLoan = (userId) => loans.some(loan => loan.userId === userId);
 
+  // Nutzer löschen
   const handleDelete = async (userId) => {
     if (userHasLoan(userId)) {
       setMessage('Nutzer hat noch ausgeliehene Medien.');
@@ -40,6 +47,7 @@ function ManageUser() {
     fetchUsers();
   };
 
+  // Rolle des Nutzers ändern
   const handleRoleChange = async (userId, newRole) => {
     const res = await fetch(`http://localhost:3001/users/${userId}/role`, {
       method: 'PUT',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+// Hilfsfunktion: User-ID aus JWT-Token extrahieren
 function getUserIdFromToken() {
   const token = sessionStorage.getItem('token');
   if (!token) return null;
@@ -12,31 +13,35 @@ function getUserIdFromToken() {
   }
 }
 
+// Komponente zum Ausleihen von Medien für eingeloggte Nutzer
 function LoanMedia() {
   const [media, setMedia] = useState([]);
   const [formData, setFormData] = useState({ mediaId: '' });
   const [message, setMessage] = useState('');
   const userId = getUserIdFromToken();
 
+  // Medien beim Laden abrufen
   useEffect(() => {
     async function fetchData() {
       const token = sessionStorage.getItem('token');
       const mediaResponse = await fetch('http://localhost:3001/media', {
         headers: { 'Authorization': 'Bearer ' + token }
       });
-       let contentType = mediaResponse.headers.get("content-type");
+      let contentType = mediaResponse.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
-      setMedia(await mediaResponse.json());
+        setMedia(await mediaResponse.json());
       }
     }
     fetchData();
   }, []);
 
+  // Formularfelder aktualisieren
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Medium ausleihen
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -51,13 +56,11 @@ function LoanMedia() {
       const result = await response.json();
       setMessage(result.message);
 
-      // Refresh media list
+      // Medienliste aktualisieren
       const mediaResponse = await fetch('http://localhost:3001/media', {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
-
       setMedia(await mediaResponse.json());
-      
     } catch (error) {
       setMessage('Fehler beim Ausleihen.');
     }
