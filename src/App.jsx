@@ -4,6 +4,7 @@ import ManageMedia from './components/ManageMedia';
 import LoanMedia from './components/LoanMedia';
 import ReturnMedia from './components/ReturnMedia'; 
 import Auth from './components/Auth';
+import ManageUser from './components/ManageUser';
 
 function getUserRoleFromToken() {
   const token = sessionStorage.getItem('token');
@@ -47,6 +48,7 @@ function App() {
           {isLoggedIn ? (
             <>
               {userRole === 'admin' && <li><Link to="/add-media">Medien verwalten</Link></li>}
+              {userRole === 'admin' && <li><Link to="/manage-user">Nutzer verwalten</Link></li>}
               <li><Link to="/loan-media">Medien ausleihen</Link></li>
               <li><Link to="/return-media">Medium zurückgeben</Link></li>
             </>
@@ -58,6 +60,7 @@ function App() {
       <main>
         <Routes>
           {isLoggedIn && userRole === 'admin' && <Route path="/add-media" element={<ManageMedia />} />}
+          {isLoggedIn && userRole === 'admin' && <Route path="/manage-user" element={<ManageUser />} />}
           {isLoggedIn && <Route path="/loan-media" element={<LoanMedia />} />}
           {isLoggedIn && <Route path="/return-media" element={<ReturnMedia />} />}
           <Route path="/auth" element={<Auth />} />

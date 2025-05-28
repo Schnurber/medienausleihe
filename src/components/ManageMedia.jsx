@@ -70,8 +70,9 @@ function ManageMedia() {
 
   return (
     <div>
-      <h2>Medium hinzufügen</h2>
-      <form onSubmit={handleSubmit}>
+      <h2>Medienverwaltung</h2>
+      <div className="message">{message}</div>
+      <form onSubmit={handleSubmit} style={{marginBottom: '2rem'}}>
         <label>
           Titel:
           <input type="text" name="title" value={formData.title} onChange={handleChange} required />
@@ -80,37 +81,32 @@ function ManageMedia() {
           Typ:
           <input type="text" name="mediaType" value={formData.mediaType} onChange={handleChange} required />
         </label>
-          <input name="available" value={formData.available} hidden />
-
-     
+        <input name="available" value={formData.available} hidden />
         <button type="submit">Medium hinzufügen</button>
-        <div className="message">{message}</div>
       </form>
 
-      <h2>Vorhandene Medien</h2>
-      <form class="medialist" onSubmit={e => { e.preventDefault(); handleDelete(); }}>
-        <ul>
-          {mediaList.map(m => (
-            <li key={m._id}>
-                <span>{m.title} ({m.mediaType}) {m.available ? '✅' : '❌'}</span>
-                {m.available && (
-                  <>
-                    <label htmlFor={"inp"+ m._id}> 
-                      Löschen: 
-                    </label>
-                    <input
-                      id={"inp"+ m._id}
-                      type="checkbox"
-                      checked={!!selected[m._id]}
-                      onChange={() => handleCheckbox(m._id)}
-                    />
-                  </>
-                )}
-            </li>
-          ))}
-        </ul>
-        <button type="submit">Ausgewählte löschen</button>
-      </form>
+      <ul>
+        {mediaList.map(m => (
+          <li key={m._id} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            <span>
+              {m.title} ({m.mediaType}) – {m.available ? <span style={{color: 'green'}}>verfügbar</span> : <span style={{color: 'red'}}>ausgeliehen</span>}
+            </span>
+            {m.available && (
+              <span>
+                <label htmlFor={"inp"+ m._id} style={{marginRight: 4}}>Löschen:</label>
+                <input
+                  id={"inp"+ m._id}
+                  type="checkbox"
+                  checked={!!selected[m._id]}
+                  onChange={() => handleCheckbox(m._id)}
+                  style={{marginRight: 8}}
+                />
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+      <button onClick={handleDelete} style={{marginTop: '1rem'}}>Ausgewählte löschen</button>
     </div>
   );
 }

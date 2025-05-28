@@ -183,6 +183,65 @@ app.get('/loans', async (req, res) => {
   }
 });
 
+// Alle Ausleihen abrufen (nur für Admins)
+app.get('/loans/all', async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen alle Ausleihen sehen.' });
+  }
+  try {
+    const loans = await Loan.find({ returnedAt: null });
+    // userId als String für Frontend
+    const formattedLoans = loans.map(loan => ({
+      _id: loan._id,
+      userId: loan.userId?.toString?.() || loan.userId
+    }));
+    res.json(formattedLoans);
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Abrufen der Ausleihen', error });
+  }
+});
+
+// Alle Nutzer abrufen (nur für Admins, ohne eigenen Nutzer)
+app.get('/users', async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen alle Nutzer sehen.' });
+  }
+  try {
+    const users = await User.find({ _id: { $ne: req.user.userId } }); // eigenen User ausfiltern
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Abrufen der Nutzer', error });
+  }
+});
+
+// Nutzer löschen (nur wenn keine Ausleihe offen, nur für Admins)
+app.delete('/users/:id', async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen Nutzer löschen.' });
+  }
+  const userId = req.params.id;
+  const hasLoan = await Loan.exists({ userId, returnedAt: null });
+  if (hasLoan) {
+    return res.status(400).json({ message: 'Nutzer hat noch ausgeliehene Medien.' });
+  }
+  await User.findByIdAndDelete(userId);
+  res.json({ message: 'Nutzer gelöscht.' });
+});
+
+// Nutzerrolle ändern (nur für Admins)
+app.put('/users/:id/role', async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen Rollen ändern.' });
+  }
+  const userId = req.params.id;
+  const { role } = req.body;
+  if (!['user', 'admin'].includes(role)) {
+    return res.status(400).json({ message: 'Ungültige Rolle.' });
+  }
+  await User.findByIdAndUpdate(userId, { role });
+  res.json({ message: 'Rolle aktualisiert.' });
+});
+
 // Medium löschen (nur für Admins, nur wenn verfügbar)
 app.delete('/media/:id', async (req, res) => {
   if (req.user.role !== 'admin') {
