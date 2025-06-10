@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 // Komponente für Login und Registrierung
 function Auth() {
@@ -18,7 +19,7 @@ function Auth() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
-    const url = isRegister ? 'http://localhost:3001/register' : 'http://localhost:3001/login';
+    const url = isRegister ? `${API_BASE_URL}/register` : `${API_BASE_URL}/login`;
     const payload = isRegister ? formData : { email: formData.email, password: formData.password };
     try {
       const response = await fetch(url, {

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config';
 
-// Komponente zur Verwaltung der Nutzer (Rolle ändern, löschen)
+// Komponente zur Verwaltung der Nutzer (Mehrfach-Löschen per Checkbox, Rollenwechsel)
 function ManageUser() {
-  // State für Nutzer, Ausleihen, Rückmeldung
   const [users, setUsers] = useState([]);
   const [loans, setLoans] = useState([]);
   const [message, setMessage] = useState('');
+  const [selected, setSelected] = useState({});
 
   // Nutzer und Ausleihen beim Laden abrufen
   useEffect(() => {
@@ -15,7 +16,7 @@ function ManageUser() {
 
   // Nutzer vom Server laden
   const fetchUsers = async () => {
-    const res = await fetch('http://localhost:3001/users', {
+    const res = await fetch(`${API_BASE_URL}/users`, {
       headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
     });
     setUsers(await res.json());
@@ -23,7 +24,7 @@ function ManageUser() {
 
   // Alle Ausleihen laden
   const fetchLoans = async () => {
-    const res = await fetch('http://localhost:3001/loans/all', {
+    const res = await fetch(`${API_BASE_URL}/loans/all`, {
       headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
     });
     setLoans(await res.json());
@@ -32,24 +33,34 @@ function ManageUser() {
   // Prüfen, ob Nutzer noch Ausleihen hat
   const userHasLoan = (userId) => loans.some(loan => loan.userId === userId);
 
-  // Nutzer löschen
-  const handleDelete = async (userId) => {
-    if (userHasLoan(userId)) {
-      setMessage('Nutzer hat noch ausgeliehene Medien.');
-      return;
+  // Checkbox-Auswahl für Löschen
+  const handleCheckbox = (id) => {
+    setSelected(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // Mehrere Nutzer löschen
+  const handleDelete = async () => {
+    const idsToDelete = Object.keys(selected).filter(id => selected[id]);
+    if (idsToDelete.length === 0) return;
+    let anyBlocked = false;
+    for (const id of idsToDelete) {
+      if (userHasLoan(id)) {
+        anyBlocked = true;
+        continue;
+      }
+      await fetch(`${API_BASE_URL}/users/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
+      });
     }
-    const res = await fetch(`http://localhost:3001/users/${userId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
-    });
-    const result = await res.json();
-    setMessage(result.message);
+    setMessage(anyBlocked ? 'Einige Nutzer konnten nicht gelöscht werden (haben Ausleihen).' : 'Ausgewählte Nutzer gelöscht.');
+    setSelected({});
     fetchUsers();
   };
 
   // Rolle des Nutzers ändern
   const handleRoleChange = async (userId, newRole) => {
-    const res = await fetch(`http://localhost:3001/users/${userId}/role`, {
+    const res = await fetch(`${API_BASE_URL}/users/${userId}/role`, {
       method: 'PUT',
       headers: { 
         'Content-Type': 'application/json',
@@ -68,7 +79,7 @@ function ManageUser() {
       <div className="message">{message}</div>
       <ul>
         {users.map(user => (
-          <li key={user._id}>
+          <li key={user._id} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <span>
               {user.name} ({user.email}) – Rolle: 
               <select
@@ -80,17 +91,22 @@ function ManageUser() {
                 <option value="admin">admin</option>
               </select>
             </span>
-            <button
-              onClick={() => handleDelete(user._id)}
-              disabled={userHasLoan(user._id)}
-              style={{ marginLeft: 8 }}
-            >
-              Löschen
-            </button>
-            {userHasLoan(user._id) && <span style={{ color: 'red', marginLeft: 8 }}>Hat Ausleihen</span>}
+            <span>
+              <label htmlFor={"inp"+ user._id} style={{marginRight: 4}}>Löschen:</label>
+              <input
+                id={"inp"+ user._id}
+                type="checkbox"
+                checked={!!selected[user._id]}
+                onChange={() => handleCheckbox(user._id)}
+                disabled={userHasLoan(user._id)}
+                style={{marginRight: 8}}
+              />
+              {userHasLoan(user._id) && <span style={{ color: 'red', marginLeft: 8 }}>Hat Ausleihen</span>}
+            </span>
           </li>
         ))}
       </ul>
+      <button onClick={handleDelete} style={{marginTop: '1rem'}}>Ausgewählte löschen</button>
     </div>
   );
 }

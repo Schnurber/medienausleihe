@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 // Komponente zur Verwaltung von Medien (Hinzufügen und Löschen)
 function ManageMedia() {
@@ -16,7 +17,7 @@ function ManageMedia() {
   // Medien vom Server laden
   const fetchMedia = async () => {
     try {
-      const response = await fetch('http://localhost:3001/media', {
+      const response = await fetch(`${API_BASE_URL}/media`, {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       const data = await response.json();
@@ -41,7 +42,7 @@ function ManageMedia() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3001/media', {
+      const response = await fetch(`${API_BASE_URL}/media`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -63,7 +64,7 @@ function ManageMedia() {
     if (idsToDelete.length === 0) return;
     try {
       for (const id of idsToDelete) {
-        await fetch(`http://localhost:3001/media/${id}`, {
+        await fetch(`${API_BASE_URL}/media/${id}`, {
           method: 'DELETE',
           headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
         });

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 // Komponente zum Zurückgeben von Medien (nur eigene Ausleihen)
 function ReturnMedia() {
@@ -9,7 +10,7 @@ function ReturnMedia() {
   // Eigene Ausleihen beim Laden abrufen
   useEffect(() => {
     async function fetchLoans() {
-      const response = await fetch('http://localhost:3001/loans', {
+      const response = await fetch(`${API_BASE_URL}/loans`, {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       let allLoans = [];
@@ -32,7 +33,7 @@ function ReturnMedia() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3001/return', {
+      const response = await fetch(`${API_BASE_URL}/return`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ function ReturnMedia() {
       const result = await response.json();
       setMessage(result.message || 'Medium erfolgreich zurückgegeben!');
       // Ausleihenliste aktualisieren
-      const loansResponse = await fetch('http://localhost:3001/loans', {
+      const loansResponse = await fetch(`${API_BASE_URL}/loans`, {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       const allLoans = await loansResponse.json();

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 // Hilfsfunktion: User-ID aus JWT-Token extrahieren
 function getUserIdFromToken() {
@@ -24,7 +25,7 @@ function LoanMedia() {
   useEffect(() => {
     async function fetchData() {
       const token = sessionStorage.getItem('token');
-      const mediaResponse = await fetch('http://localhost:3001/media', {
+      const mediaResponse = await fetch(`${API_BASE_URL}/media`, {
         headers: { 'Authorization': 'Bearer ' + token }
       });
       let contentType = mediaResponse.headers.get("content-type");
@@ -45,7 +46,7 @@ function LoanMedia() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3001/loan', {
+      const response = await fetch(`${API_BASE_URL}/loan`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ function LoanMedia() {
       setMessage(result.message);
 
       // Medienliste aktualisieren
-      const mediaResponse = await fetch('http://localhost:3001/media', {
+      const mediaResponse = await fetch(`${API_BASE_URL}/media`, {
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
       });
       setMedia(await mediaResponse.json());
