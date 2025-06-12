@@ -47,23 +47,23 @@ function App() {
         <ul>
           {isLoggedIn ? (
             <>
-              {userRole === 'admin' && <li><Link to="add-media">Medien verwalten</Link></li>}
-              {userRole === 'admin' && <li><Link to="manage-user">Nutzer verwalten</Link></li>}
-              <li><Link to="loan-media">Medien ausleihen</Link></li>
-              <li><Link to="return-media">Medium zurückgeben</Link></li>
+              {userRole === 'admin' && <li><Link Link to={`${process.env.PUBLIC_URL}/add-media`}>Medien verwalten</Link></li>}
+              {userRole === 'admin' && <li><Link Link to={`${process.env.PUBLIC_URL}/manage-user`}>Nutzer verwalten</Link></li>}
+              <li><Link Link to={`${process.env.PUBLIC_URL}/loan-media`}>Medien ausleihen</Link></li>
+              <li><Link Link to={`${process.env.PUBLIC_URL}/return-media`}>Medium zurückgeben</Link></li>
             </>
           ) : (
-            <li><Link to="auth">Login/Registrierung</Link></li>
+            <li><Link to={`${process.env.PUBLIC_URL}/auth`}>Login/Registrierung</Link></li>
           )}
         </ul>
       </nav>
       <main>
         <Routes>
-          {isLoggedIn && userRole === 'admin' && <Route path="add-media" element={<ManageMedia />} />}
-          {isLoggedIn && userRole === 'admin' && <Route path="manage-user" element={<ManageUser />} />}
-          {isLoggedIn && <Route path="loan-media" element={<LoanMedia />} />}
-          {isLoggedIn && <Route path="return-media" element={<ReturnMedia />} />}
-          <Route path="auth" element={<Auth />} />
+          {isLoggedIn && userRole === 'admin' && <Route path={`${process.env.PUBLIC_URL}/add-media`} element={<ManageMedia />} />}
+          {isLoggedIn && userRole === 'admin' && <Route path={`${process.env.PUBLIC_URL}/manage-user`} element={<ManageUser />} />}
+          {isLoggedIn && <Route path={`${process.env.PUBLIC_URL}/loan-media`} element={<LoanMedia />} />}
+          {isLoggedIn && <Route path={`${process.env.PUBLIC_URL}/return-media`} element={<ReturnMedia />} />}
+          <Route path={`${process.env.PUBLIC_URL}/auth`} element={<Auth />} />
         </Routes>
       </main>
     </div>
