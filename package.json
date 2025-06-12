@@ -1,4 +1,5 @@
 {
+  "homepage": "localhost",
   "name": "medienausleihe",
   "version": "0.1.0",
   "private": true,

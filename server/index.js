@@ -4,13 +4,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const https = require('https');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 // Konfiguration importieren
-const { MONGODB_URI } = require('./config');
+const { MONGODB_URI, HTTPS_PORT } = require('./config');
 
 // Verbindung zur MongoDB
 mongoose.connect(MONGODB_URI)
@@ -265,7 +267,18 @@ app.delete('/media/:id', async (req, res) => {
   }
 });
 
-// Server starten
-app.listen(3001, () => {
-  console.log("🚀 Server läuft auf http://localhost:3001");
-});
+// Server starten (HTTP)
+const PORT = 3001;
+
+// Optional: HTTPS-Server starten, wenn Zertifikate vorhanden sind
+try {
+  const key = fs.readFileSync('./certs/key.pem');
+  const cert = fs.readFileSync('./certs/cert.pem');
+  https.createServer({ key, cert }, app).listen(PORT, () => {
+    console.log(`🔒 HTTPS-Server läuft auf https://localhost:${PORT}`);
+  });
+} catch (err) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+  });
+}
