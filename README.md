@@ -107,7 +107,7 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
 
 ---
 
-### 5. Backen starten
+### 5. Backend starten
 
 1. Stelle sicher, dass du dich im Projektverzeichnis befindest:
    ```bash
@@ -117,21 +117,44 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
    ```bash
    npm install
    ```
-3. Starte den Server:
-   ```bash
-   node server/index.js
+3. Zertifikate für https(optional)
    ```
-4. Der Server läuft nun unter: [http://localhost:3000](http://localhost:3000)
+   $ mkdir certs
+$    cd certs
+     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out cert.crt
+   ```
+4. Konfiguriere API-Server server/config.js
 
-### 5. React starten
+5. Konfiguruere Webseite src/config.js mit Bas-Url des API-Servers, am Besten: IP:
+   ```bash
+   curl ifconfig.me
+   ```
+   
+6. Starte den Server im Hintergrund (läuft bei Beendigung der Konsole weiter):
+   ```bash
+   nohup node server/index.js &
+   ```
+   Wieder beenden: 
+   ```bash
+   pgrep node
+   kill PID
+   ```
+7. Der Server läuft nun unter: [http://localhost:3000](http://localhost:3000)
 
+8. Build
+
+   starten oder
    ```bash
    npm start
+   ```
+   build:
+   ```bash
+   npm run build
    ```
 
 ---
 
-### 6. API-Endpunkte
+### API-Endpunkte
 
 - **GET** `/users`: Alle Benutzer abrufen
 - **POST** `/users`: Neuen Benutzer hinzufügen

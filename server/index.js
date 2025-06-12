@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // Konfiguration importieren
-const { MONGODB_URI, HTTPS_PORT } = require('./config');
+const { MONGODB_URI, PORT } = require('./config');
 
 // Verbindung zur MongoDB
 mongoose.connect(MONGODB_URI)
@@ -266,9 +266,6 @@ app.delete('/media/:id', async (req, res) => {
     res.status(500).json({ message: 'Fehler beim Löschen.' });
   }
 });
-
-// Server starten (HTTP)
-const PORT = 3001;
 
 // Optional: HTTPS-Server starten, wenn Zertifikate vorhanden sind
 try {
