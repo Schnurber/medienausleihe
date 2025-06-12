@@ -128,7 +128,7 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
    ```
 4. Konfiguriere API-Server server/config.js
 
-5. Konfiguruere Webseite src/config.js mit Bas-Url des API-Servers, am Besten: IP:
+5. Konfiguriere Webseite src/config.js mit Bas-Url des API-Servers, am Besten: IP:
 
    ```bash
    curl ifconfig.me
