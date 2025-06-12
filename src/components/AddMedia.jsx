@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 function AddMedia() {
   const [formData, setFormData] = useState({ title: '', mediaType: '', available: true });
@@ -12,7 +13,7 @@ function AddMedia() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3001/media', {
+      const response = await fetch(`${API_BASE_URL}/media`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
