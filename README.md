@@ -110,43 +110,53 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
 ### 5. Backend starten
 
 1. Stelle sicher, dass du dich im Projektverzeichnis befindest:
+
    ```bash
    cd <Projektordner>
    ```
 2. Installiere die Abhängigkeiten:
+
    ```bash
    npm install
    ```
 3. Zertifikate für https(optional)
+
    ```
-   $ mkdir certs
-$    cd certs
-     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out cert.crt
+    mkdir certs
+    cd certs
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out cert.crt
    ```
 4. Konfiguriere API-Server server/config.js
 
 5. Konfiguruere Webseite src/config.js mit Bas-Url des API-Servers, am Besten: IP:
+
    ```bash
    curl ifconfig.me
    ```
    
 6. Starte den Server im Hintergrund (läuft bei Beendigung der Konsole weiter):
+
    ```bash
    nohup node server/index.js &
    ```
+
    Wieder beenden: 
+
    ```bash
    pgrep node
    kill PID
    ```
+
 7. Der Server läuft nun unter: [http://localhost:3000](http://localhost:3000)
 
 8. Build
 
    starten oder
+
    ```bash
    npm start
    ```
+
    build:
    ```bash
    npm run build
