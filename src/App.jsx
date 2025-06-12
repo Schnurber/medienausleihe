@@ -49,8 +49,8 @@ function App() {
             <>
               {userRole === 'admin' && <li><Link to="add-media">Medien verwalten</Link></li>}
               {userRole === 'admin' && <li><Link to="manage-user">Nutzer verwalten</Link></li>}
-              <li><Link to="/loan-media">Medien ausleihen</Link></li>
-              <li><Link to="/return-media">Medium zurückgeben</Link></li>
+              <li><Link to="loan-media">Medien ausleihen</Link></li>
+              <li><Link to="return-media">Medium zurückgeben</Link></li>
             </>
           ) : (
             <li><Link to="auth">Login/Registrierung</Link></li>
