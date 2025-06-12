@@ -278,6 +278,7 @@ try {
     console.log(`🔒 HTTPS-Server läuft auf https://localhost:${PORT}`);
   });
 } catch (err) {
+  console.log(err);
   app.listen(PORT, () => {
     console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
   });
