@@ -40,7 +40,7 @@ function Auth() {
         // Token speichern und weiterleiten
         if (result.token) {
           sessionStorage.setItem('token', result.token);
-          window.location.href = '/loan-media'; // Seite neu laden, damit Menü und Routing stimmen
+          window.location.href = 'loan-media'; // Seite neu laden, damit Menü und Routing stimmen
         }
       }
       // Registrierung erfolgreich: Wechsel auf Login-Ansicht
