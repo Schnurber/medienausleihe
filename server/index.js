@@ -9,8 +9,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Konfiguration importieren
+const { MONGODB_URI } = require('./config');
+
 // Verbindung zur MongoDB
-mongoose.connect('mongodb://localhost:27017/medienausleihe')
+mongoose.connect(MONGODB_URI)
   .then(() => console.log("✅ Verbunden mit MongoDB"))
   .catch(err => console.error("❌ MongoDB-Verbindung fehlgeschlagen:", err));
 
