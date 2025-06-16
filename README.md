@@ -126,6 +126,9 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
     cd certs
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out cert.crt
    ```
+   oder besser mit [letsencrypt](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-16-04)
+
+
 4. Konfiguriere API-Server server/config.js
 
 5. Konfiguriere Webseite src/config.js mit Bas-Url des API-Servers, am Besten: IP:
