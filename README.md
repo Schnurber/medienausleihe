@@ -143,7 +143,7 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
    nohup node server/index.js &
    ```
 
-   Wieder beenden: 
+   (Wieder beenden geht so:) 
 
    ```bash
    pgrep node
