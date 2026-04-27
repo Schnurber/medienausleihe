@@ -35,18 +35,39 @@ function authHeaders() {
     : { 'Content-Type': 'application/json' };
 }
 
+function getCurrentUserFromToken() {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+  try {
+    const payloadBase64 = token.split('.')[1];
+    const payload = JSON.parse(atob(payloadBase64));
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
 // loanmedia.html: Dropdowns für Benutzer und Medien
 async function loadDropdowns() {
   try {
-    const [usersResponse, mediaResponse] = await Promise.all([
-      fetch('http://localhost:3002/users', { headers: authHeaders() }),
-      fetch('http://localhost:3002/media', { headers: authHeaders() })
+    const currentUser = getCurrentUserFromToken();
+    const isAdmin = currentUser?.role === 'admin';
+
+    const [mediaResponse, usersResponse] = await Promise.all([
+      fetch('http://localhost:3002/media', { headers: authHeaders() }),
+      isAdmin ? fetch('http://localhost:3002/users', { headers: authHeaders() }) : Promise.resolve(null)
     ]);
 
-    const users = await usersResponse.json();
     const media = await mediaResponse.json();
+    const users = usersResponse ? await usersResponse.json() : [];
 
-    if (!Array.isArray(users)) {
+    const userSelect = document.getElementById('userId'); // loanmedia.html
+    const mediaSelect = document.getElementById('mediaId'); // loanmedia.html
+
+    userSelect.innerHTML = '<option value="">Bitte wählen...</option>';
+    mediaSelect.innerHTML = '<option value="">Bitte wählen...</option>';
+
+    if (isAdmin && !Array.isArray(users)) {
       console.error('Benutzer konnten nicht geladen werden:', users.message);
       return;
     }
@@ -55,16 +76,22 @@ async function loadDropdowns() {
       return;
     }
 
-    const userSelect = document.getElementById('userId'); // loanmedia.html
-    const mediaSelect = document.getElementById('mediaId'); // loanmedia.html
-    userSelect.innerHTML = ''; // Vorherige Optionen entfernen
-    mediaSelect.innerHTML = ''; // Vorherige Optionen entfernen
-    users.forEach(user => {
+    if (isAdmin) {
+      users.forEach(user => {
+        const option = document.createElement('option');
+        option.value = user._id;
+        option.textContent = user.name;
+        userSelect.appendChild(option);
+      });
+      userSelect.disabled = false;
+    } else {
       const option = document.createElement('option');
-      option.value = user._id;
-      option.textContent = user.name;
+      option.value = currentUser?.userId || '';
+      option.textContent = currentUser?.name || 'Eigener Benutzer';
       userSelect.appendChild(option);
-    });
+      userSelect.value = option.value;
+      userSelect.disabled = true;
+    }
 
     media.forEach(item => {
       if (item.available) {
@@ -82,7 +109,10 @@ async function loadDropdowns() {
 // returnmedia.html: Dropdown für aktive Ausleihen
 async function loadLoansDropdown() {
   try {
-    const response = await fetch('http://localhost:3002/loans', { headers: authHeaders() });
+    const currentUser = getCurrentUserFromToken();
+    const isAdmin = currentUser?.role === 'admin';
+    const endpoint = isAdmin ? 'http://localhost:3002/loans/all' : 'http://localhost:3002/loans';
+    const response = await fetch(endpoint, { headers: authHeaders() });
     const loans = await response.json();
     if (!Array.isArray(loans)) {
       console.error('Ausleihen konnten nicht geladen werden:', loans.message);
@@ -90,12 +120,16 @@ async function loadLoansDropdown() {
     }
 
     const loanSelect = document.getElementById('loanId'); // returnmedia.html
-    loanSelect.innerHTML = ''; // Vorherige Optionen entfernen
+    loanSelect.innerHTML = '<option value="">Bitte wählen...</option>';
     loans.forEach(loan => {
       if (!loan.returnedAt) {
         const option = document.createElement('option');
         option.value = loan._id;
-        option.textContent = `Benutzer: ${loan.userName || 'Unbekannt'}, Medium: ${loan.mediaTitle || 'Unbekannt'}`;
+        if (isAdmin) {
+          option.textContent = `Benutzer: ${loan.userName || 'Unbekannt'}, Medium: ${loan.title || 'Unbekannt'}`;
+        } else {
+          option.textContent = `Medium: ${loan.title || 'Unbekannt'}`;
+        }
         loanSelect.appendChild(option);
       }
     });
@@ -108,7 +142,9 @@ async function loadLoansDropdown() {
 document.getElementById('loanForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const userId = document.getElementById('userId').value;
+  const currentUser = getCurrentUserFromToken();
+  const isAdmin = currentUser?.role === 'admin';
+  const userId = isAdmin ? document.getElementById('userId').value : currentUser?.userId;
   const mediaId = document.getElementById('mediaId').value;
   const messageDiv = document.getElementById('message');
 
@@ -119,7 +155,7 @@ document.getElementById('loanForm')?.addEventListener('submit', async (e) => {
       body: JSON.stringify({ userId, mediaId })
     });
     const result = await response.json();
-    loadDropdowns()
+    loadDropdowns();
     messageDiv.textContent = result.message;
     messageDiv.style.color = response.ok ? 'green' : 'red';
   } catch (error) {
@@ -134,13 +170,14 @@ document.getElementById('addUserForm')?.addEventListener('submit', async (e) => 
 
   const name = document.getElementById('name').value;
   const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
   const messageDiv = document.getElementById('message');
 
   try {
     const response = await fetch('http://localhost:3002/users', {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ name, email })
+      body: JSON.stringify({ name, email, password })
     });
 
     const result = await response.json();
