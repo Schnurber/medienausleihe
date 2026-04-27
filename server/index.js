@@ -142,16 +142,30 @@ app.post('/media', async (req, res) => {
 app.post('/loan', async (req, res) => {
   const { userId, mediaId } = req.body;
 
-  const media = await Media.findById(mediaId);
-  if (!media || !media.available) {
-    return res.status(400).json({ message: 'Medium nicht verfügbar' });
+  try {
+    if (!mediaId) {
+      return res.status(400).json({ message: 'Medium ist erforderlich.' });
+    }
+
+    // Admin darf für beliebige Nutzer ausleihen; normale Nutzer nur für sich selbst.
+    const effectiveUserId = req.user.role === 'admin' ? userId : req.user.userId;
+    if (!effectiveUserId) {
+      return res.status(400).json({ message: 'Benutzer ist erforderlich.' });
+    }
+
+    const media = await Media.findById(mediaId);
+    if (!media || !media.available) {
+      return res.status(400).json({ message: 'Medium nicht verfügbar' });
+    }
+
+    await Loan.create({ userId: effectiveUserId, mediaId, borrowedAt: new Date() });
+    media.available = false;
+    await media.save();
+
+    res.json({ message: 'Ausleihe erfolgreich' });
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler bei der Ausleihe', error });
   }
-
-  await Loan.create({ userId, mediaId, borrowedAt: new Date() });
-  media.available = false;
-  await media.save();
-
-  res.json({ message: 'Ausleihe erfolgreich' });
 });
 
 // Medium zurückgeben
@@ -194,11 +208,15 @@ app.get('/loans/all', async (req, res) => {
     return res.status(403).json({ message: 'Nur Admins dürfen alle Ausleihen sehen.' });
   }
   try {
-    const loans = await Loan.find({ returnedAt: null });
-    // userId als String für Frontend
+    const loans = await Loan.find({ returnedAt: null })
+      .populate('userId', 'name')
+      .populate('mediaId', 'title');
+
     const formattedLoans = loans.map(loan => ({
       _id: loan._id,
-      userId: loan.userId?.toString?.() || loan.userId
+      userId: loan.userId?._id?.toString?.() || loan.userId?.toString?.() || loan.userId,
+      userName: loan.userId?.name || 'Unbekannt',
+      title: loan.mediaId?.title || 'Unbekannt'
     }));
     res.json(formattedLoans);
   } catch (error) {
@@ -216,6 +234,42 @@ app.get('/users', async (req, res) => {
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Fehler beim Abrufen der Nutzer', error });
+  }
+});
+
+// Nutzer hinzufügen (nur für Admins)
+app.post('/users', async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Nur Admins dürfen Nutzer hinzufügen.' });
+  }
+
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, E-Mail und Passwort sind erforderlich.' });
+  }
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'E-Mail bereits registriert' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user'
+    });
+
+    res.status(201).json({
+      message: 'Benutzer erfolgreich hinzugefügt',
+      user: { _id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Hinzufügen des Benutzers', error });
   }
 });
 
