@@ -27,15 +27,22 @@ function Auth() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      // Fehlerbehandlung für Netzwerkfehler und leere Antwort
+      const contentType = response.headers.get('content-type') || '';
       let result = {};
-      try {
+
+      if (contentType.includes('application/json')) {
         result = await response.json();
-      } catch {
-        setMessage('Server antwortet nicht oder liefert ungültige Daten.');
+      } else {
+        const text = await response.text();
+        setMessage(
+          text
+            ? `Unerwartete Serverantwort (${response.status}): ${text.slice(0, 160)}`
+            : `Serverantwort ohne JSON (${response.status}).`
+        );
         return;
       }
-      setMessage(result.message);
+
+      setMessage(result.message || 'Anfrage abgeschlossen.');
       if (response.ok && !isRegister) {
         // Token speichern und weiterleiten
         if (result.token) {

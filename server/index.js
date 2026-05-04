@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const https = require('https');
 const os = require('os');
+const path = require('path');
 
 const app = express();
 app.use(express.json());
@@ -49,6 +50,28 @@ const JWT_SECRET = 'dein_geheimes_jwt_secret'; // In Produktion in ENV auslagern
 
 function getServerHost() {
   return process.env.HOST || os.hostname() || 'localhost';
+}
+
+function resolveHttpsCredentials() {
+  const certCandidates = [
+    { key: 'certs/key.pem', cert: 'certs/cert.pem' },
+    { key: 'certs/key.key', cert: 'certs/cert.crt' },
+    { key: 'server/certs/key.pem', cert: 'server/certs/cert.pem' },
+    { key: 'server/certs/key.key', cert: 'server/certs/cert.crt' }
+  ];
+
+  for (const candidate of certCandidates) {
+    const keyPath = path.resolve(candidate.key);
+    const certPath = path.resolve(candidate.cert);
+    if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+      return {
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath)
+      };
+    }
+  }
+
+  return null;
 }
 
 // Auth-Middleware
@@ -330,13 +353,18 @@ app.delete('/media/:id', async (req, res) => {
 const SERVER_HOST = getServerHost();
 
 try {
-  const key = fs.readFileSync('./certs/key.pem');
-  const cert = fs.readFileSync('./certs/cert.pem');
-  https.createServer({ key, cert }, app).listen(PORT, () => {
-    console.log(`🔒 HTTPS-Server läuft auf https://${SERVER_HOST}:${PORT}`);
-  });
+  const credentials = resolveHttpsCredentials();
+  if (credentials) {
+    https.createServer(credentials, app).listen(PORT, () => {
+      console.log(`🔒 HTTPS-Server läuft auf https://${SERVER_HOST}:${PORT}`);
+    });
+  } else {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server läuft auf http://${SERVER_HOST}:${PORT}`);
+    });
+  }
 } catch (err) {
-  console.log(err);
+  console.log('Fehler beim Start des HTTPS-Servers, Fallback auf HTTP:', err.message);
   app.listen(PORT, () => {
     console.log(`🚀 Server läuft auf http://${SERVER_HOST}:${PORT}`);
   });
