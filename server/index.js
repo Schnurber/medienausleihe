@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const https = require('https');
+const os = require('os');
 
 const app = express();
 app.use(express.json());
@@ -45,6 +46,10 @@ const Media = mongoose.model('Media', mediaSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 
 const JWT_SECRET = 'dein_geheimes_jwt_secret'; // In Produktion in ENV auslagern
+
+function getServerHost() {
+  return process.env.HOST || os.hostname() || 'localhost';
+}
 
 // Auth-Middleware
 function authMiddleware(req, res, next) {
@@ -322,15 +327,17 @@ app.delete('/media/:id', async (req, res) => {
 });
 
 // Optional: HTTPS-Server starten, wenn Zertifikate vorhanden sind
+const SERVER_HOST = getServerHost();
+
 try {
   const key = fs.readFileSync('./certs/key.pem');
   const cert = fs.readFileSync('./certs/cert.pem');
   https.createServer({ key, cert }, app).listen(PORT, () => {
-    console.log(`🔒 HTTPS-Server läuft auf https://localhost:${PORT}`);
+    console.log(`🔒 HTTPS-Server läuft auf https://${SERVER_HOST}:${PORT}`);
   });
 } catch (err) {
   console.log(err);
   app.listen(PORT, () => {
-    console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+    console.log(`🚀 Server läuft auf http://${SERVER_HOST}:${PORT}`);
   });
 }

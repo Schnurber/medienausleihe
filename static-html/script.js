@@ -1,4 +1,9 @@
 // login.html: Login-Formular
+const API_PROTOCOL = 'http';
+const API_DOMAIN = window.location.hostname || 'localhost';
+const API_PORT = '3002';
+const API_BASE_URL = `${API_PROTOCOL}://${API_DOMAIN}:${API_PORT}`;
+
 document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value;
@@ -6,7 +11,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   const messageDiv = document.getElementById('message');
 
   try {
-    const response = await fetch('http://localhost:3002/login', {
+    const response = await fetch(`${API_BASE_URL}/login`, {
       method: 'POST',
       headers: addHeaders(),
       body: JSON.stringify({ email, password })
@@ -54,8 +59,8 @@ async function loadDropdowns() {
     const isAdmin = currentUser?.role === 'admin';
 
     const [mediaResponse, usersResponse] = await Promise.all([
-      fetch('http://localhost:3002/media', { headers: authHeaders() }),
-      isAdmin ? fetch('http://localhost:3002/users', { headers: authHeaders() }) : Promise.resolve(null)
+      fetch(`${API_BASE_URL}/media`, { headers: authHeaders() }),
+      isAdmin ? fetch(`${API_BASE_URL}/users`, { headers: authHeaders() }) : Promise.resolve(null)
     ]);
 
     const media = await mediaResponse.json();
@@ -111,7 +116,7 @@ async function loadLoansDropdown() {
   try {
     const currentUser = getCurrentUserFromToken();
     const isAdmin = currentUser?.role === 'admin';
-    const endpoint = isAdmin ? 'http://localhost:3002/loans/all' : 'http://localhost:3002/loans';
+    const endpoint = isAdmin ? `${API_BASE_URL}/loans/all` : `${API_BASE_URL}/loans`;
     const response = await fetch(endpoint, { headers: authHeaders() });
     const loans = await response.json();
     if (!Array.isArray(loans)) {
@@ -149,7 +154,7 @@ document.getElementById('loanForm')?.addEventListener('submit', async (e) => {
   const messageDiv = document.getElementById('message');
 
   try {
-    const response = await fetch('http://localhost:3002/loan', {
+    const response = await fetch(`${API_BASE_URL}/loan`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({ userId, mediaId })
@@ -174,7 +179,7 @@ document.getElementById('addUserForm')?.addEventListener('submit', async (e) => 
   const messageDiv = document.getElementById('message');
 
   try {
-    const response = await fetch('http://localhost:3002/users', {
+    const response = await fetch(`${API_BASE_URL}/users`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({ name, email, password })
@@ -199,7 +204,7 @@ document.getElementById('addMediaForm')?.addEventListener('submit', async (e) =>
   const messageDiv = document.getElementById('message');
 
   try {
-    const response = await fetch('http://localhost:3002/media', {
+    const response = await fetch(`${API_BASE_URL}/media`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({ title, mediaType, available })
@@ -222,7 +227,7 @@ document.getElementById('returnForm')?.addEventListener('submit', async (e) => {
   const messageDiv = document.getElementById('message');
 
   try {
-    const response = await fetch('http://localhost:3002/return', {
+    const response = await fetch(`${API_BASE_URL}/return`, {
       method: 'POST',
       headers: authHeaders(),
       body: JSON.stringify({ loanId })
