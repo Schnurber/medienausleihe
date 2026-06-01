@@ -38,7 +38,7 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
 #### macOS:
 1. Füge das MongoDB-Homebrew-Repository hinzu:
    ```bash
-   brew tap mongodb/brew
+ brew tap mongodb/brew
    ```
 2. Installiere MongoDB:
    ```bash
@@ -152,15 +152,22 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
 
 7. Der Server läuft nun unter: [http://localhost:3000](http://localhost:3000)
 
-8. Build
+8. Start/Build
 
-   starten oder
+   Backend starten (z. B. für Render Web Service):
 
    ```bash
    npm start
    ```
 
-   build:
+   Frontend lokal im Dev-Modus starten:
+
+   ```bash
+   npm run start:client
+   ```
+
+   Frontend-Build:
+
    ```bash
    npm run build
    ```

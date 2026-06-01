@@ -1,7 +1,8 @@
-// const LOCAL_MONGODB_URI = 'mongodb://localhost:27017/medienausleihe';
+const LOCAL_MONGODB_URI = '';
 
 module.exports = {
-  // Wenn hier nichts eingetragen ist, wird MONGODB_URI aus den Umgebungsvariablen verwendet.
+  // Optional lokal setzen, sonst Umgebungsvariable verwenden.
   MONGODB_URI: LOCAL_MONGODB_URI || process.env.MONGODB_URI,
-  PORT: 3002
+  // Render setzt PORT als Umgebungsvariable.
+  PORT: Number(process.env.PORT) || 3002
 };
