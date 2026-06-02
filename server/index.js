@@ -17,9 +17,19 @@ app.use(cors());
 const { MONGODB_URI, PORT, JWT_SECRET } = require('./config');
 
 // Verbindung zur MongoDB
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log("✅ Verbunden mit MongoDB"))
-  .catch(err => console.error("❌ MongoDB-Verbindung fehlgeschlagen:", err));
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI ist nicht gesetzt. Bitte Umgebungsvariable in Render prüfen.');
+} else {
+  mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 15000,
+    family: 4
+  })
+    .then(() => console.log('✅ Verbunden mit MongoDB'))
+    .catch(err => {
+      console.error('❌ MongoDB-Verbindung fehlgeschlagen:', err.message);
+      console.error('ℹ️ Prüfe Atlas Network Access (IP Allow List), DB-User-Rechte und URI.');
+    });
+}
 
 // SCHEMAS & MODELS
 const userSchema = new mongoose.Schema({
