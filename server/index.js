@@ -382,8 +382,12 @@ app.delete('/media/:id', async (req, res) => {
 });
 
 if (hasReactBuild) {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(reactBuildDir, 'index.html'));
+  app.use((req, res, next) => {
+    const acceptsHtml = (req.headers.accept || '').includes('text/html');
+    if (req.method === 'GET' && acceptsHtml && !req.path.startsWith('/api')) {
+      return res.sendFile(path.join(reactBuildDir, 'index.html'));
+    }
+    return next();
   });
 }
 
