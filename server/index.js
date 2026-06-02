@@ -13,6 +13,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const staticHtmlDir = path.resolve('static-html');
+app.use(express.static(staticHtmlDir));
+
 // Konfiguration importieren
 const { MONGODB_URI, PORT, JWT_SECRET } = require('./config');
 
@@ -86,6 +89,7 @@ function resolveHttpsCredentials() {
 function authMiddleware(req, res, next) {
   if (
     req.path === '/' ||
+    req.path === '/api' ||
     req.path === '/health' ||
     req.path === '/login' ||
     req.path === '/register'
@@ -108,7 +112,7 @@ function authMiddleware(req, res, next) {
 
 app.use(authMiddleware);
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({ message: 'Medienausleihe API online' });
 });
 
