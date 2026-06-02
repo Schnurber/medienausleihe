@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 
 // Konfiguration importieren
-const { MONGODB_URI, PORT } = require('./config');
+const { MONGODB_URI, PORT, JWT_SECRET } = require('./config');
 
 // Verbindung zur MongoDB
 mongoose.connect(MONGODB_URI)
@@ -46,8 +46,6 @@ const User = mongoose.model('User', userSchema);
 const Media = mongoose.model('Media', mediaSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 
-const JWT_SECRET = 'dein_geheimes_jwt_secret'; // In Produktion in ENV auslagern
-
 function getServerHost() {
   return process.env.HOST || os.hostname() || 'localhost';
 }
@@ -77,6 +75,8 @@ function resolveHttpsCredentials() {
 // Auth-Middleware
 function authMiddleware(req, res, next) {
   if (
+    req.path === '/' ||
+    req.path === '/health' ||
     req.path === '/login' ||
     req.path === '/register'
   ) {
@@ -97,6 +97,14 @@ function authMiddleware(req, res, next) {
 }
 
 app.use(authMiddleware);
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Medienausleihe API online' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 // ROUTES
 
