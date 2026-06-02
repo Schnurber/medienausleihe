@@ -13,8 +13,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const reactBuildDir = path.resolve('build');
 const staticHtmlDir = path.resolve('static-html');
-app.use(express.static(staticHtmlDir));
+const hasReactBuild = fs.existsSync(path.join(reactBuildDir, 'index.html'));
+
+app.use(express.static(hasReactBuild ? reactBuildDir : staticHtmlDir));
 
 // Konfiguration importieren
 const { MONGODB_URI, PORT, JWT_SECRET } = require('./config');
@@ -87,6 +90,13 @@ function resolveHttpsCredentials() {
 
 // Auth-Middleware
 function authMiddleware(req, res, next) {
+  const acceptsHtml = (req.headers.accept || '').includes('text/html');
+
+  // Browser-Navigation zur React-SPA ohne Token erlauben.
+  if (req.method === 'GET' && acceptsHtml) {
+    return next();
+  }
+
   if (
     req.path === '/' ||
     req.path === '/api' ||
@@ -370,6 +380,12 @@ app.delete('/media/:id', async (req, res) => {
     res.status(500).json({ message: 'Fehler beim Löschen.' });
   }
 });
+
+if (hasReactBuild) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(reactBuildDir, 'index.html'));
+  });
+}
 
 // Optional: HTTPS-Server starten, wenn Zertifikate vorhanden sind
 const SERVER_HOST = getServerHost();
