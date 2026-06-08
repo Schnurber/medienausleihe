@@ -188,3 +188,23 @@ Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-
 
 Viel Erfolg mit der Medienausleihe!
 
+## Installation in der Cloud
+
+Wir verwenden MonDB Atlas als Cloud-Datenbank und render.com als Webspace.
+Alles ist frei und umsonst.
+Weiter verwenden wir Github oder Gitlab.
+
+Schritt für Schritt:
+
+1. Atlas: Cluster und Datenbank mit den Collections anlegen
+* IP-Adresse freigeben: IP Access List -> 0.0.0.0/0
+* Connection String kopieren: Dasboard -> Connect -> Drivers
+
+2. render.com -> Settings
+* Repository-Adresse von Github oder Gitlab eintragen, Branch angeben (bei Source)
+* Build-Command `npm install && npm run build``
+* Deploy, Start-Command: `npm start`
+* Umgebungs-Variablen eintagen: `JWT_SECRET` und `MONGODB_URI`, der kopierte Connection String
+
+
+
