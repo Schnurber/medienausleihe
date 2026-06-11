@@ -7,6 +7,7 @@ function ManageUser() {
   const [loans, setLoans] = useState([]);
   const [message, setMessage] = useState('');
   const [selected, setSelected] = useState({});
+  const hasSelection = Object.values(selected).some(Boolean);
 
   // Nutzer und Ausleihen beim Laden abrufen
   useEffect(() => {
@@ -106,7 +107,14 @@ function ManageUser() {
           </li>
         ))}
       </ul>
-      <button onClick={handleDelete} style={{marginTop: '1rem'}}>Ausgewählte löschen</button>
+      <button
+        type="button"
+        onClick={handleDelete}
+        className="danger-button"
+        disabled={!hasSelection}
+      >
+        Ausgewaehlte loeschen
+      </button>
     </div>
   );
 }

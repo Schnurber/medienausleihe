@@ -8,6 +8,7 @@ function ManageMedia() {
   const [message, setMessage] = useState('');
   const [mediaList, setMediaList] = useState([]);
   const [selected, setSelected] = useState({});
+  const hasSelection = Object.values(selected).some(Boolean);
 
   // Medien beim Laden der Komponente abrufen
   useEffect(() => {
@@ -115,7 +116,14 @@ function ManageMedia() {
           </li>
         ))}
       </ul>
-      <button onClick={handleDelete} style={{marginTop: '1rem'}}>Ausgewählte löschen</button>
+      <button
+        type="button"
+        onClick={handleDelete}
+        className="danger-button"
+        disabled={!hasSelection}
+      >
+        Ausgewaehlte loeschen
+      </button>
     </div>
   );
 }
