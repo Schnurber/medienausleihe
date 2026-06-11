@@ -1,210 +1,111 @@
 # Medienausleihe
 
-Dieses Projekt ermöglicht die Verwaltung von Medienausleihen mit einem Node.js-Backend und einer MongoDB-Datenbank.
+Webanwendung zur Verwaltung von Medienausleihen mit React-Frontend, Express-Backend und MongoDB.
 
-## Komponenten-Übersicht (React)
+## Funktionen
 
-- **Auth.jsx**  
-  Login- und Registrierungsformular. Nach erfolgreichem Login wird das Token gespeichert und die Seite neu geladen.
+- Login und Registrierung mit JWT
+- Rollenbasierte Navigation (user und admin)
+- Medien ausleihen und zurueckgeben
+- Admin: Medien verwalten (anlegen, mehrere loeschen)
+- Admin: Nutzer verwalten (Rollen aendern, mehrere loeschen)
+- Moderne, responsive UI
 
-- **ManageMedia.jsx**  
-  Verwaltung der Medien: Medien können hinzugefügt und (sofern verfügbar) gelöscht werden. Die Medien werden in einer Liste angezeigt, Checkboxen erlauben Mehrfachlöschung.
+## Tech-Stack
 
-- **ManageUser.jsx**  
-  Verwaltung der Nutzer: Nutzer können gelöscht werden (nur wenn keine Ausleihe offen ist) und die Rolle ("user"/"admin") kann geändert werden. Der eigene Nutzer wird nicht angezeigt.
+- Frontend: React, React Router
+- Backend: Node.js, Express
+- Datenbank: MongoDB (lokal oder Atlas)
+- Auth: JSON Web Token
 
-- **LoanMedia.jsx**  
-  Ermöglicht eingeloggten Nutzern das Ausleihen von Medien. Es werden nur verfügbare Medien angezeigt.
+## Projektstruktur
 
-- **ReturnMedia.jsx**  
-  Zeigt die eigenen ausgeliehenen Medien an und ermöglicht deren Rückgabe.
-
-- **App.jsx**  
-  Hauptkomponente, die das Routing und das Menü steuert. Zeigt je nach Rolle und Login-Status die passenden Menüpunkte und Komponenten.
-
----
+- src: React-App
+- server: Express-API und Konfiguration
+- static-html: aeltere statische Variante
+- public: statische Frontend-Dateien
 
 ## Voraussetzungen
 
-- [Node.js](https://nodejs.org/) (Version 16 oder höher)
-- [MongoDB](https://www.mongodb.com/) (Community Edition)
+- Node.js 18 oder neuer
+- MongoDB lokal oder MongoDB Atlas
 
----
+## Installation
 
-## Schritt-für-Schritt-Anleitung
+1. Abhaengigkeiten installieren:
 
-### 1. MongoDB installieren
-
-#### macOS:
-1. Füge das MongoDB-Homebrew-Repository hinzu:
-   ```bash
- brew tap mongodb/brew
-   ```
-2. Installiere MongoDB:
-   ```bash
-   brew install mongodb-community@7.0
-   ```
-3. Starte den MongoDB-Dienst:
-   ```bash
-   brew services start mongodb/brew/mongodb-community@7.0
-   ```
-
-#### Windows/Linux:
-- Lade MongoDB von der offiziellen Website herunter: [MongoDB Community Edition](https://www.mongodb.com/try/download/community).
-- Folge den Installationsanweisungen für dein Betriebssystem.
-
----
-
-### 2. MongoDB starten
-
-1. Öffne die MongoDB-Shell:
-   ```bash
-   mongosh
-   ```
-2. Überprüfe die verfügbaren Datenbanken:
-   ```bash
-   show dbs
-   ```
-3. Wechsle zur Datenbank `medienausleihe` (erstellt sie, falls sie nicht existiert):
-   ```bash
-   use medienausleihe
-   ```
-
----
-
-### 3. Collections anlegen
-
-1. Füge Benutzer-Daten hinzu:
-   ```bash
-   db.users.insertMany([
-     { name: "Max Mustermann", email: "max@example.com" },
-     { name: "Erika Musterfrau", email: "erika@example.com" }
-   ])
-   ```
-2. Füge Medien-Daten hinzu:
-   ```bash
-   db.media.insertMany([
-     { title: "Der Herr der Ringe", mediaType: "Buch", available: true },
-     { title: "Inception", mediaType: "DVD", available: true },
-     { title: "Harry Potter", mediaType: "Buch", available: true }
-   ])
-   ```
-3. Füge eine Beispiel-Ausleihe hinzu (ersetze `DEINE_USER_ID` und `DEINE_MEDIA_ID` durch echte IDs):
-   ```bash
-   db.loans.insertOne({
-     userId: ObjectId("DEINE_USER_ID"),
-     mediaId: ObjectId("DEINE_MEDIA_ID"),
-     borrowedAt: new Date(),
-     returnedAt: null
-   })
-   ```
-
----
-
-### 4. MongoDB GUI (optional)
-
-- Lade [MongoDB Compass](https://www.mongodb.com/try/download/compass) herunter, um die Datenbank und Collections visuell zu verwalten.
-
----
-
-### 5. Backend starten
-
-1. Stelle sicher, dass du dich im Projektverzeichnis befindest:
-
-   ```bash
-   cd <Projektordner>
-   ```
-2. Installiere die Abhängigkeiten:
-
-   ```bash
    npm install
-   ```
-3. Zertifikate für https(optional)
 
-   ```
-    mkdir certs
-    cd certs
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.key -out cert.crt
-   ```
-   oder besser mit [letsencrypt](https://www.digitalocean.com/community/tutorials/how-to-use-certbot-standalone-mode-to-retrieve-let-s-encrypt-ssl-certificates-on-ubuntu-16-04)
+2. Lokale Umgebungsvariablen in .env setzen (Datei liegt im Projektroot):
 
+   MONGODB_URI=mongodb://127.0.0.1:27017/medienausleihe
+   JWT_SECRET=dein_langes_sicheres_secret
+   REACT_APP_API_BASE_URL=http://localhost:3002
 
-4. Konfiguriere API-Server server/config.js
+Hinweise:
+- Die Datei .env ist in .gitignore und wird nicht mitcommittet.
+- Wenn .env nicht existiert, laeuft die App trotzdem. Dann kommen Werte nur aus echten Umgebungsvariablen.
+- REACT_APP_API_BASE_URL ist optional. Ohne Wert nutzt das Frontend lokal automatisch http://localhost:3002.
 
-5. Konfiguriere Webseite src/config.js mit Bas-Url des API-Servers, am Besten: IP:
+## Starten
 
-   ```bash
-   curl ifconfig.me
-   ```
-   
-6. Starte den Server im Hintergrund (läuft bei Beendigung der Konsole weiter):
+Backend starten:
 
-   ```bash
-   nohup node server/index.js &
-   ```
+npm start
 
-   (Wieder beenden geht so:) 
+Frontend im Dev-Modus starten:
 
-   ```bash
-   pgrep node
-   kill PID
-   ```
+npm run start:client
 
-7. Der Server läuft nun unter: [http://localhost:3000](http://localhost:3000)
+Produktions-Build erstellen:
 
-8. Start/Build
+npm run build
 
-   Backend starten (z. B. für Render Web Service):
+## API (Kurzueberblick)
 
-   ```bash
-   npm start
-   ```
+Auth:
+- POST /register
+- POST /login
 
-   Frontend lokal im Dev-Modus starten:
+Medien:
+- GET /media
+- POST /media (admin)
+- DELETE /media/:id (admin)
 
-   ```bash
-   npm run start:client
-   ```
+Nutzer:
+- GET /users (admin)
+- DELETE /users/:id (admin)
+- PUT /users/:id/role (admin)
 
-   Frontend-Build:
+Ausleihen:
+- POST /loan
+- POST /return
+- GET /loans
+- GET /loans/all (admin)
 
-   ```bash
-   npm run build
-   ```
+## Deployment (Render + MongoDB Atlas)
 
----
+1. MongoDB Atlas
+- Cluster erstellen
+- Datenbanknutzer anlegen
+- IP Access List konfigurieren
+- Connection String als MONGODB_URI verwenden
 
-### API-Endpunkte
+2. Render Web Service
+- Repository und Branch verbinden
+- Build Command: npm install && npm run build
+- Start Command: npm start
+- Umgebungsvariablen setzen:
+  - MONGODB_URI
+  - JWT_SECRET
+  - optional REACT_APP_API_BASE_URL
 
-- **GET** `/users`: Alle Benutzer abrufen
-- **POST** `/users`: Neuen Benutzer hinzufügen
-- **GET** `/media`: Alle Medien abrufen
-- **POST** `/media`: Neues Medium hinzufügen
-- **POST** `/loan`: Medium ausleihen
-- **POST** `/return`: Medium zurückgeben
-- **GET** `/loans`: Aktive Ausleihen abrufen
+## Sicherheit
 
----
+- Keine echten Secrets im Code oder in Git speichern
+- JWT_SECRET in Produktion immer als sichere Umgebungsvariable setzen
+- Verbindung zur Datenbank nur mit minimal noetigen Rechten konfigurieren
 
-Viel Erfolg mit der Medienausleihe!
+## Lizenz
 
-## Installation in der Cloud
-
-Wir verwenden MonDB Atlas als Cloud-Datenbank und render.com als Webspace.
-Alles ist frei und umsonst.
-Weiter verwenden wir Github oder Gitlab.
-
-Schritt für Schritt:
-
-1. Atlas: Cluster und Datenbank mit den Collections anlegen
-* IP-Adresse freigeben: IP Access List -> 0.0.0.0/0
-* Connection String kopieren: Dasboard -> Connect -> Drivers
-
-2. render.com -> Settings
-* Repository-Adresse von Github oder Gitlab eintragen, Branch angeben (bei Source)
-* Build-Command `npm install && npm run build``
-* Deploy, Start-Command: `npm start`
-* Umgebungs-Variablen eintagen: `JWT_SECRET` und `MONGODB_URI`, der kopierte Connection String
-
-
-
+Siehe LICENSE.
