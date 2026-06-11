@@ -1,113 +1,270 @@
-/* Define CSS variables */
 :root {
-  --primary-color: #4CAF50;
-    --field-color: #7bce7e;
-  --primary-hover-color: color-mix(in srgb, var(--primary-color) 90%, black 10%);
-  --secondary-color: color-mix(in srgb, var(--primary-color) 80%, white 20%);
-  --text-color: white;
-  --background-color: #f9f9f9;
-  --border-color: #ccc;
-  --box-shadow-color: rgba(0, 0, 0, 0.1);
+  --bg-1: #f9f5ee;
+  --bg-2: #e8f1ff;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: #ffffff;
+  --text-main: #213042;
+  --text-soft: #5f6f82;
+  --accent: #1f8a70;
+  --accent-strong: #166f5a;
+  --accent-soft: #e8f7f2;
+  --border: #c9d6e3;
+  --danger: #be3d2a;
+  --shadow: 0 18px 36px rgba(24, 44, 68, 0.12);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-  background-color: var(--background-color);
+  min-height: 100vh;
+  color: var(--text-main);
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at 12% 18%, #fff4cc 0, rgba(255, 244, 204, 0) 44%),
+    radial-gradient(circle at 80% 10%, #d8ebff 0, rgba(216, 235, 255, 0) 38%),
+    linear-gradient(150deg, var(--bg-1), var(--bg-2));
 }
 
-header {
-  background-color: var(--primary-color);
-  color: var(--text-color);
-  padding: 1rem 0;
-  text-align: center;
+.app-shell {
+  min-height: 100vh;
+  padding: 2rem clamp(1rem, 2.6vw, 2.75rem) 2.5rem;
 }
 
-header h1 {
-  margin: 0;
+.app-header {
+  background: linear-gradient(130deg, #15344f 0%, #28567f 50%, #1f8a70 100%);
+  color: #fff;
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: clamp(1rem, 2.4vw, 1.8rem);
 }
 
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+.header-content {
   display: flex;
-  justify-content: center;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-nav ul li {
+.app-header h1 {
   margin: 0;
+  font-size: clamp(1.5rem, 3.1vw, 2.35rem);
+  letter-spacing: 0.02em;
 }
 
-nav ul li a {
-  display: block;
+.subtitle {
+  margin: 0.45rem 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.98rem;
+}
+
+.user-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(6px);
+}
+
+.role-badge {
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ghost-button {
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+  padding: 0.42rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ghost-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.main-nav {
+  margin-top: 1rem;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.52rem;
+  border-radius: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 8px 24px rgba(31, 54, 84, 0.09);
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 10px;
   text-decoration: none;
-  padding: 0.75rem 1.5rem;
-  transition: background-color 0.3s;
+  color: var(--text-main);
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
-nav ul li:hover {
-  background-color: var(--secondary-color);
+.nav-link:hover {
+  background: #eef7ff;
+  transform: translateY(-1px);
 }
 
-main {
-  padding: 1rem;
+.nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+}
+
+.content-area {
+  margin-top: 1rem;
+  padding: clamp(1rem, 2vw, 1.8rem);
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+  animation: riseIn 360ms ease-out;
+}
+
+h2 {
+  margin-top: 0.1rem;
+  text-align: center;
+  color: #15344f;
+  letter-spacing: 0.01em;
 }
 
 form {
-  max-width: 400px;
-  margin: 0 auto;
-  background: white;
-  padding: 2rem;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px var(--box-shadow-color);
+  max-width: 520px;
+  margin: 0.5rem auto 0;
+  background: var(--surface-strong);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 1.2rem 1.1rem;
+  box-shadow: 0 8px 18px rgba(23, 40, 59, 0.08);
 }
 
 form label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: 0.85rem;
+  font-weight: 600;
+  color: #33465d;
 }
 
-form input, form select, form button {
+form input,
+form select,
+form button {
   width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  margin-top: 0.45rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 0.62rem 0.72rem;
+  font: inherit;
 }
 
-form input {
-  background-color: var(--field-color);
-  color: var(--text-color);
+form input,
+form select {
+  color: var(--text-main);
+  background: #fefefe;
+}
+
+form input:focus,
+form select:focus {
+  outline: 2px solid #7ebfad;
+  border-color: #7ebfad;
+}
+
+form button {
   border: none;
+  margin-top: 0.75rem;
+  font-weight: 700;
+  color: #fff;
   cursor: pointer;
-}
-
-.medialist input {
-   width: min-content;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
 }
 
 form button:hover {
-  background-color: var(--primary-hover-color);
+  filter: brightness(1.05);
 }
 
-message, h2 {
+.message {
   text-align: center;
-  margin-top: 1rem;
-  font-weight: bold;
+  margin-top: 0.75rem;
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
 ul {
-  list-style-type: none;
+  list-style: none;
+  margin: 1rem 0 0;
   padding: 0;
 }
 
 ul li {
-  background: white;
-  margin: 0.5rem 0;
-  padding: 0.75rem;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px var(--box-shadow-color);
+  background: rgba(255, 255, 255, 0.86);
+  margin: 0.65rem 0;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 14px rgba(30, 47, 70, 0.08);
+}
+
+input[type='checkbox'] {
+  width: auto;
+  accent-color: var(--accent);
+}
+
+.medialist input {
+  width: min-content;
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 1rem 0.7rem 1.35rem;
+  }
+
+  .content-area {
+    padding: 0.95rem 0.8rem;
+  }
+
+  .nav-list {
+    gap: 0.28rem;
+  }
+
+  .nav-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  form {
+    padding: 0.95rem 0.85rem;
+  }
 }

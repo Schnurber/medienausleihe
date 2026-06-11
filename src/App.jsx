@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import ManageMedia from './components/ManageMedia'; 
 import LoanMedia from './components/LoanMedia';
 import ReturnMedia from './components/ReturnMedia'; 
@@ -32,32 +32,46 @@ function App() {
   const isLoggedIn = !!sessionStorage.getItem('token');
   const userRole = getUserRoleFromToken();
   const userName = getUserNameFromToken();
-  // console.log(isLoggedIn);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('token');
+    window.location.href = `${process.env.PUBLIC_URL}/auth`;
+  };
+
   return (
-    <div className="App">
-      <header>
-        <h1>Medienausleihe</h1>
-        <p>
+    <div className="app-shell">
+      <header className="app-header">
+        <div className="header-content">
+          <div>
+            <h1>Medienausleihe</h1>
+            <p className="subtitle">Leihen, verwalten und zurueckgeben in einer klaren Uebersicht.</p>
+          </div>
           {isLoggedIn && userName && (
-            <span style={{fontWeight: 'bold', color: '#fff'}}>Angemeldet als: {userName} Rolle: {userRole}</span>
+            <div className="user-box">
+              <span>Angemeldet als {userName}</span>
+              <span className="role-badge">Rolle: {userRole}</span>
+              <button type="button" className="ghost-button" onClick={handleLogout}>Abmelden</button>
+            </div>
           )}
-        </p>
+        </div>
       </header>
-      <nav>
-        <ul>
+
+      <nav className="main-nav">
+        <ul className="nav-list">
           {isLoggedIn ? (
             <>
-              {userRole === 'admin' && <li><Link to="/add-media">Medien verwalten</Link></li>}
-              {userRole === 'admin' && <li><Link to="/manage-user">Nutzer verwalten</Link></li>}
-              <li><Link to="/loan-media">Medien ausleihen</Link></li>
-              <li><Link to="/return-media">Medium zurückgeben</Link></li>
+              {userRole === 'admin' && <li><NavLink to="/add-media" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Medien verwalten</NavLink></li>}
+              {userRole === 'admin' && <li><NavLink to="/manage-user" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Nutzer verwalten</NavLink></li>}
+              <li><NavLink to="/loan-media" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Medien ausleihen</NavLink></li>
+              <li><NavLink to="/return-media" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Medium zurueckgeben</NavLink></li>
             </>
           ) : (
-            <li><Link to="/auth">Login/Registrierung</Link></li>
+            <li><NavLink to="/auth" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Login und Registrierung</NavLink></li>
           )}
         </ul>
       </nav>
-      <main>
+
+      <main className="content-area">
         <Routes>
           {isLoggedIn && userRole === 'admin' && <Route path="/add-media" element={<ManageMedia />} />}
           {isLoggedIn && userRole === 'admin' && <Route path="/manage-user" element={<ManageUser />} />}

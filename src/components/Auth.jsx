@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 
 // Komponente für Login und Registrierung
@@ -8,7 +7,6 @@ function Auth() {
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
 
   // Formularfelder aktualisieren
   const handleChange = (e) => {
